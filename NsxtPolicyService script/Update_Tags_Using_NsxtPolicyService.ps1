@@ -67,7 +67,7 @@ try{
 
 #script
 
-if ($VmName -ne ""){
+if ($VmName){
     $vms = get-vm $VmName
 } else {
     $vms = get-vm
