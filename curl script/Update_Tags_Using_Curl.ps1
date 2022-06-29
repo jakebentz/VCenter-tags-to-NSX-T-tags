@@ -76,7 +76,7 @@ try{
 }
 
 #If no VmName is provided, run against all vms in vCenter
-if ($VmName -ne ""){
+if ($VmName){
     $vms = get-vm $VmName
 } else {
     $vms = get-vm
@@ -86,8 +86,9 @@ if ($VmName -ne ""){
 foreach ($vm in $vms){
 $tags = Get-TagAssignment -Entity $vm
 $tagsNum = $tags.count
+$name = $vm.Name
 
-"$(get-date -format 'dd-MMM-yyy hh:mm')`tUpdating $tagsNum tags on $vm" | Tee-Object $logFile -Append
+"$(get-date -format 'dd-MMM-yyy hh:mm')`tUpdating $tagsNum tags on $name" | Tee-Object $logFile -Append
 $vmid = $vm.PersistentId
 "$(get-date -format 'dd-MMM-yyy hh:mm')`tNSX External ID $vmid" | Tee-Object $logFile -Append
 
@@ -127,12 +128,12 @@ for ( $index = 0; $index -lt $tagArray.count; $index++)
 }
 $curlCommand +="]}`""
 #"$(get-date -format 'dd-MMM-yyy hh:mm')`tRunning $curlCommand"
-"$(get-date -format 'dd-MMM-yyy hh:mm')`tRunning curl command for $VmName`:" | Tee-Object $logFile -Append
+"$(get-date -format 'dd-MMM-yyy hh:mm')`tRunning curl command for $name`:" | Tee-Object $logFile -Append
 "$(get-date -format 'dd-MMM-yyy hh:mm')`t$curlCommand" | Tee-Object $logFile -Append
 
 #create batch file to successfull call curl command
-echo $curlCommand >> $temppath\curl-command_$VmName.cmd
-cmd.exe /c $temppath\curl-command_$VmName.cmd
+echo $curlCommand >> $temppath\curl-command_$name.cmd
+cmd.exe /c $temppath\curl-command_$name.cmd
 
 #clean up temp file from working directory
 Remove-Item $temppath\*
